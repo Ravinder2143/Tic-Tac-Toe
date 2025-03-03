@@ -9,7 +9,6 @@ const MainPage = () => {
   const [turn, setTurn] = useState("X");
   const [winner, setWinner] = useState(null);
   const [waitingPopup, setWaitingPopup] = useState(false);
-  // const [isDraw, setIsDraw] = useState(false);
   const [disconnectPopup, setDisconnectPopup] = useState(false);
   const navigate = useNavigate();
 
@@ -33,9 +32,6 @@ const MainPage = () => {
       setTurn(res.Turn);
       setBoard(res.board);
       setWinner(res.winner);
-      // if(res.winner === "draw"){
-      //   setIsDraw(true);
-      // }
     });
 
     socket.on("playerDisconnected", () => {
@@ -61,9 +57,9 @@ const MainPage = () => {
       socket.off("disconnect");
       socket.off("playerDisconnected");
     };
-  }, );
+  },);
 
- 
+
 
   // Handle cell click
   const handleMove = (index) => {
@@ -95,7 +91,7 @@ const MainPage = () => {
       setWaitingPopup(true);
       setTimeout(() => {
         setWaitingPopup(false);
-      }, 3000);
+      }, 1500);
     }
   };
 
@@ -140,13 +136,7 @@ const MainPage = () => {
             {winner === playerType ? "You Won!" : winner === "draw" ? "Game Draw!" : "Opponent Won!"}
           </div>
           <div className="mt-4 flex gap-4">
-            {/* <button 
-              onClick={handleRematch}
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
-            >
-              Rematch
-            </button> */}
-            <button 
+            <button
               onClick={handleExit}
               className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
             >
@@ -155,8 +145,6 @@ const MainPage = () => {
           </div>
         </>
       )}
-
-     
 
       {waitingPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

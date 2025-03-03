@@ -67,7 +67,7 @@ export default function SearchingPage() {
       console.log("Attempting to reconnect...");
       socket.connect();
     }
-    
+
     if (socket.connected) {
       socket.emit("joinGame", symbol);
       console.log(`Sent symbol: ${symbol}`);
@@ -85,11 +85,6 @@ export default function SearchingPage() {
     setTimeout(() => {
       setSearching(false);
     }, 4000); // Simulate a 4-second search
-  };
-
-  // Handle exit button click
-  const handleExit = () => {
-    setSearching(false);
   };
 
   return (
@@ -121,7 +116,7 @@ export default function SearchingPage() {
             Random
           </Button>
         </div>
-        
+
       </div>
       {searching && (
         <motion.div
@@ -132,7 +127,7 @@ export default function SearchingPage() {
         >
           <div className="bg-white p-8 rounded-xl flex flex-col items-center space-y-6 w-96">
             <Loader2 />
-            <p className="text-gray-800 text-xl">Searching...</p>
+            <p className="text-gray-800 text-xl">Wait For Other Player</p>
           </div>
         </motion.div>
       )}
