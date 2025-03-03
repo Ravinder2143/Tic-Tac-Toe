@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import socket from "./Socketservice";
 
@@ -8,6 +9,8 @@ const MainPage = () => {
   const [turn, setTurn] = useState("X");
   const [winner, setWinner] = useState(null);
   const [waitingPopup, setWaitingPopup] = useState(false);
+  const [isDraw, setIsDraw] = useState(false);
+  const navigate = useNavigate();
 
   // Load game state from local storage on mount
   useEffect(() => {
@@ -47,6 +50,13 @@ const MainPage = () => {
     };
   }, [winner]);
 
+  // Add this function to check for draw
+  useEffect(() => {
+    if (!winner && board.every(cell => cell !== null)) {
+      setIsDraw(true);
+    }
+  }, [board, winner]);
+
   // Handle cell click
   const handleMove = (index) => {
     // Do nothing if the cell is already filled or if the game is over
@@ -81,6 +91,18 @@ const MainPage = () => {
     }
   };
 
+  // Add handler for rematch button
+  const handleRematch = () => {
+    localStorage.removeItem("gameState"); // Clear the current game state
+    navigate("/searching"); // Navigate to searching page
+  };
+
+  // Add handler for exit button
+  const handleExit = () => {
+    localStorage.removeItem("gameState");
+    navigate("/"); // Navigate to home page or wherever your initial page is
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
       <h1 className="text-4xl font-bold mb-6">Real-Time Tic-Tac-Toe</h1>
@@ -111,9 +133,47 @@ const MainPage = () => {
       </div>
 
       {winner && (
-        <div className="mt-4 text-2xl font-bold text-red-400">
-          {winner === playerType ? "You Won!" : "Opponent Won!"}
-        </div>
+        <>
+          <div className="mt-4 text-2xl font-bold text-red-400">
+            {winner === playerType ? "You Won!" : "Opponent Won!"}
+          </div>
+          <div className="mt-4 flex gap-4">
+            <button 
+              onClick={handleRematch}
+              className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+            >
+              Rematch
+            </button>
+            <button 
+              onClick={handleExit}
+              className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+            >
+              Exit
+            </button>
+          </div>
+        </>
+      )}
+
+      {isDraw && !winner && (
+        <>
+          <div className="mt-4 text-2xl font-bold text-yellow-400">
+            Game Draw!
+          </div>
+          <div className="mt-4 flex gap-4">
+            <button 
+              onClick={handleRematch}
+              className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+            >
+              Rematch
+            </button>
+            <button 
+              onClick={handleExit}
+              className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+            >
+              Exit
+            </button>
+          </div>
+        </>
       )}
 
       {waitingPopup && (
