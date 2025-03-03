@@ -121,12 +121,7 @@ export default function SearchingPage() {
             Random
           </Button>
         </div>
-        <Button
-          onClick={handleExit}
-          className="bg-red-500 hover:bg-red-600 text-white"
-        >
-          Exit
-        </Button>
+        
       </div>
       {searching && (
         <motion.div

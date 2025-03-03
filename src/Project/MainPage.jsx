@@ -9,7 +9,8 @@ const MainPage = () => {
   const [turn, setTurn] = useState("X");
   const [winner, setWinner] = useState(null);
   const [waitingPopup, setWaitingPopup] = useState(false);
-  const [isDraw, setIsDraw] = useState(false);
+  // const [isDraw, setIsDraw] = useState(false);
+  const [disconnectPopup, setDisconnectPopup] = useState(false);
   const navigate = useNavigate();
 
   // Load game state from local storage on mount
@@ -32,6 +33,17 @@ const MainPage = () => {
       setTurn(res.Turn);
       setBoard(res.board);
       setWinner(res.winner);
+      // if(res.winner === "draw"){
+      //   setIsDraw(true);
+      // }
+    });
+
+    socket.on("playerDisconnected", () => {
+      setDisconnectPopup(true);
+      setTimeout(() => {
+        setDisconnectPopup(false);
+        handleExit();
+      }, 3000);
     });
 
     // Listen for disconnect events and try to reconnect if game is still active
@@ -47,15 +59,11 @@ const MainPage = () => {
     return () => {
       socket.off("gameUpdate");
       socket.off("disconnect");
+      socket.off("playerDisconnected");
     };
-  }, [winner]);
+  }, );
 
-  // Add this function to check for draw
-  useEffect(() => {
-    if (!winner && board.every(cell => cell !== null)) {
-      setIsDraw(true);
-    }
-  }, [board, winner]);
+ 
 
   // Handle cell click
   const handleMove = (index) => {
@@ -89,12 +97,6 @@ const MainPage = () => {
         setWaitingPopup(false);
       }, 3000);
     }
-  };
-
-  // Add handler for rematch button
-  const handleRematch = () => {
-    localStorage.removeItem("gameState"); // Clear the current game state
-    navigate("/"); // Navigate to searching page
   };
 
   // Add handler for exit button
@@ -135,15 +137,15 @@ const MainPage = () => {
       {winner && (
         <>
           <div className="mt-4 text-2xl font-bold text-red-400">
-            {winner === playerType ? "You Won!" : "Opponent Won!"}
+            {winner === playerType ? "You Won!" : winner === "draw" ? "Game Draw!" : "Opponent Won!"}
           </div>
           <div className="mt-4 flex gap-4">
-            <button 
+            {/* <button 
               onClick={handleRematch}
               className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
             >
               Rematch
-            </button>
+            </button> */}
             <button 
               onClick={handleExit}
               className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
@@ -154,32 +156,20 @@ const MainPage = () => {
         </>
       )}
 
-      {isDraw && !winner && (
-        <>
-          <div className="mt-4 text-2xl font-bold text-yellow-400">
-            Game Draw!
-          </div>
-          <div className="mt-4 flex gap-4">
-            <button 
-              onClick={handleRematch}
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
-            >
-              Rematch
-            </button>
-            <button 
-              onClick={handleExit}
-              className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
-            >
-              Exit
-            </button>
-          </div>
-        </>
-      )}
+     
 
       {waitingPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-xl text-gray-800">
             <p>Wait for your turn</p>
+          </div>
+        </div>
+      )}
+
+      {disconnectPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-xl text-gray-800">
+            <p>Opponent disconnected. Returning to home...</p>
           </div>
         </div>
       )}
