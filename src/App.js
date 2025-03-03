@@ -7,6 +7,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SearchingPage />} />
         <Route path="/MainPage" element={<MainPage />} />
+        {/* <Route path="/MainPage" element={<MainPage />} /> */}
       </Routes>
     </BrowserRouter>
   );

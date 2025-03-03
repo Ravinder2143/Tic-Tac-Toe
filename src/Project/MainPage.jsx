@@ -94,7 +94,7 @@ const MainPage = () => {
   // Add handler for rematch button
   const handleRematch = () => {
     localStorage.removeItem("gameState"); // Clear the current game state
-    navigate("/searching"); // Navigate to searching page
+    navigate("/"); // Navigate to searching page
   };
 
   // Add handler for exit button
